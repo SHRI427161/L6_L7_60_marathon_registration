@@ -1,25 +1,54 @@
 def format_bib_name(name):
     """
     Upper-cases a runner's name and cuts it to 12 characters for the bib.
-    Assumes name is a non-empty string.
+    Handles non-string and edge-case inputs gracefully without crashing.
     """
-    return name.strip().upper()[:12]
+    try:
+        if not isinstance(name, str):
+            return ""
+        return name.strip().upper()[:12]
+    except Exception:
+        return ""
 
 def parse_finish_time(text):
     """
     Converts a finish time written as H:MM:SS into seconds.
-    Assumes text has exactly three numeric parts.
+    Handles malformed or non-string inputs gracefully without crashing.
+    Returns total seconds as an integer, or None if invalid.
     """
-    hours, minutes, seconds = text.split(':')
-    return int(hours) * 3600 + int(minutes) * 60 + int(seconds)
+    try:
+        if not isinstance(text, str):
+            return None
+        parts = text.strip().split(':')
+        if len(parts) != 3:
+            return None
+        hours = int(parts[0])
+        minutes = int(parts[1])
+        seconds = int(parts[2])
+        if hours < 0 or minutes < 0 or seconds < 0:
+            return None
+        return hours * 3600 + minutes * 60 + seconds
+    except Exception:
+        return None
 
 def average_split(text):
     """
     Averages split times given in minutes, separated by spaces.
-    Assumes at least one split and that every split is a whole number.
+    Handles malformed or non-string inputs gracefully without crashing.
+    Returns average split as a float, or None if invalid.
     """
-    splits = [int(s) for s in text.split()]
-    return sum(splits) / len(splits)
+    try:
+        if not isinstance(text, str):
+            return None
+        tokens = text.strip().split()
+        if not tokens:
+            return None
+        splits = [int(s) for s in tokens]
+        if any(s < 0 for s in splits):
+            return None
+        return sum(splits) / len(splits)
+    except Exception:
+        return None
 
 def main():
     print("==== Running format_bib_name ====")
